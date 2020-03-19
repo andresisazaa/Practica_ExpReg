@@ -1,0 +1,59 @@
+<h3>Expresión regular: {{regExp}}</h3>
+<h3 class="automaton__title">Autómata</h3>
+<h4>Símbolo de secuencia nula: @</h4>
+<!-- <h4>Símbolo de fin de secuencia: /</h4> -->
+<div class="automaton-container" *ngIf="automaton">
+    <table class="table">
+        <thead>
+            <tr>
+                <th>Símbolos</th>
+            </tr>
+        </thead>
+        <tbody>
+            <tr *ngFor="let symbol of automaton.inputSymbols">
+                <td>{{symbol}}</td>
+            </tr>
+        </tbody>
+    </table>
+
+    <table class="table">
+        <thead>
+            <tr>
+                <th>Estado</th>
+                <th>Aceptación</th>
+            </tr>
+        </thead>
+        <tbody>
+            <tr *ngFor="let state of automaton.states">
+                <td>{{state.name}}</td>
+                <td><i *ngIf="state.acceptance" class="fa fa-check icon--success"></i>
+                    <i *ngIf="!state.acceptance" class="fa fa-times icon--failed"></i>
+                </td>
+            </tr>
+        </tbody>
+    </table>
+
+    <table class="table">
+        <thead>
+            <tr>
+                <th></th>
+                <th *ngFor="let symbol of automaton.inputSymbols">{{symbol}}</th>
+            </tr>
+        </thead>
+        <tbody>
+            <tr *ngFor="let state of automaton.states">
+                <th scope="row">{{state.name}}</th>
+                <td *ngFor="let symbol of automaton.inputSymbols">
+                    {{showNextState(state.name, symbol)}}
+                </td>
+            </tr>
+        </tbody>
+    </table>
+</div>
+<div class="recognizer-container">
+    <input class="recognizer__input" type="text" #sequence (keydown.enter)="recognizeSequence(sequence.value)">
+    <button class="recognizer__button" (click)="recognizeSequence(sequence.value)">Reconocer</button>
+    <p class="recognizer__message"
+        [ngClass]="{'recognizer__message--success': recognizedSequence, 'recognizer__message--failed': !recognizedSequence}">
+        {{sequenceMessage}}</p>
+</div>

@@ -1,0 +1,18 @@
+<section class="exps-section">
+    <h2>Expresiones regulares Ingresadas</h2>
+    <table class="table">
+        <thead>
+            <tr>
+                <th>Expresiones</th>
+            </tr>
+        </thead>
+        <tbody>
+            <tr *ngFor="let regExp of regExps; let i = index" (click)="selectRegExp(i)">
+                <td>
+                    <app-automata-item [regExp]="regExp">
+                    </app-automata-item>
+                </td>
+            </tr>
+        </tbody>
+    </table>
+</section>

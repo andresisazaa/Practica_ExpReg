@@ -1,0 +1,67 @@
+{
+  "inputSymbols": ["0", "1"],
+  "states": [
+    {
+      "name": "A",
+      "acceptance": true,
+      "initial": true
+    },
+    {
+      "name": "B",
+      "acceptance": false,
+      "initial": false
+    },
+    {
+      "name": "C",
+      "acceptance": false,
+      "initial": false
+    },
+    {
+      "name": "D",
+      "acceptance": false,
+      "initial": false
+    }
+  ],
+  "transitions": [
+    {
+      "actualState": "A",
+      "inputSymbol": "0",
+      "nextState": "C"
+    },
+    {
+      "actualState": "A",
+      "inputSymbol": "1",
+      "nextState": "B"
+    },
+    {
+      "actualState": "B",
+      "inputSymbol": "0",
+      "nextState": "D"
+    },
+    {
+      "actualState": "B",
+      "inputSymbol": "1",
+      "nextState": "A"
+    },
+    {
+      "actualState": "C",
+      "inputSymbol": "0",
+      "nextState": "A"
+    },
+    {
+      "actualState": "C",
+      "inputSymbol": "1",
+      "nextState": "D"
+    },
+    {
+      "actualState": "D",
+      "inputSymbol": "0",
+      "nextState": "B"
+    },
+    {
+      "actualState": "D",
+      "inputSymbol": "1",
+      "nextState": "C"
+    }
+  ]
+}

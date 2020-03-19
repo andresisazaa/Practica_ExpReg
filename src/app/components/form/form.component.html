@@ -1,0 +1,13 @@
+<section class="form-section">
+    <h3 class="form-section__title">Ingreso de expresiones regulares</h3>
+    <form class="form" (ngSubmit)="onSubmit()" [formGroup]="RegExpForm">
+        <div class="form__item">
+            <label for="RegExp" class="form__item__label">Expresión regular:</label>
+            <input class="form__item__input" type="text" formControlName="RegExp" name="RegExp"
+                placeholder="Ingrese una expresión regular...">
+        </div>
+        <div class="form__item">
+            <button class="btn btn-success form__button__submit" type="submit">Enviar</button>
+        </div>
+    </form>
+</section>
