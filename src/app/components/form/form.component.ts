@@ -23,7 +23,6 @@ export class FormComponent implements OnInit {
     const regExp = this.RegExpForm.value['RegExp'];
     this.regExpService.convertRegExpToAutomaton(regExp)
       .subscribe(res => {
-        console.log('RES', res);
         Swal.fire({
           icon: 'success',
           title: 'Exito',
