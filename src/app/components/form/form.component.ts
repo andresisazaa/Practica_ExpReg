@@ -22,11 +22,13 @@ export class FormComponent implements OnInit {
   onSubmit(): void {
     this.errorMessage = '';
     const regExp: string = this.RegExpForm.value['RegExp'];
-    if (this.RegExpForm.invalid || regExp.includes(this.badPattern)) {
+    if (this.RegExpForm.invalid || regExp.includes(this.badPattern) || regExp.includes('|+')) {
       if (this.RegExpForm.invalid) {
         this.errorMessage = 'Ingrese una expresión!';
       } else if (regExp.includes(this.badPattern)) {
         this.errorMessage = `¡Subsecuencia ${this.badPattern} no permitida!`;
+      } else if (regExp.includes('|+')) {
+        this.errorMessage = `¡Subsecuencia |+ no permitida!`;
       }
       return;
     }
