@@ -11,7 +11,8 @@ import Swal from 'sweetalert2';
 export class FormComponent implements OnInit {
   RegExpForm: FormGroup;
   constructor(private regExpService: RegExpService, private router: Router) { }
-
+  errorMessage: string;
+  badPattern = '|*';
   ngOnInit(): void {
     this.RegExpForm = new FormGroup({
       RegExp: new FormControl(null, Validators.required)
@@ -19,8 +20,16 @@ export class FormComponent implements OnInit {
   }
 
   onSubmit(): void {
-    if (this.RegExpForm.invalid) return;
-    const regExp = this.RegExpForm.value['RegExp'];
+    this.errorMessage = '';
+    const regExp: string = this.RegExpForm.value['RegExp'];
+    if (this.RegExpForm.invalid || regExp.includes(this.badPattern)) {
+      if (this.RegExpForm.invalid) {
+        this.errorMessage = 'Ingrese una expresión!';
+      } else if (regExp.includes(this.badPattern)) {
+        this.errorMessage = `¡Subsecuencia ${this.badPattern} no permitida!`;
+      }
+      return;
+    }
     this.regExpService.convertRegExpToAutomaton(regExp)
       .subscribe(res => {
         Swal.fire({

@@ -9,5 +9,8 @@
         <div class="form__item">
             <button class="btn btn-success form__button__submit" type="submit">Enviar</button>
         </div>
+        <div class="form__item">
+            <p *ngIf="errorMessage">{{errorMessage}}</p>
+        </div>
     </form>
 </section>
