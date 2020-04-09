@@ -12,118 +12,13 @@ import { Transition } from '../models/transicion.model';
 export class RegExpService {
   API_URL = 'https://endpoint-rex2fsm.herokuapp.com';
   MOCKY_URL = 'http://www.mocky.io/v2/5e7304573000005e002e61b9';
-  regExps: string[] = ['[00 + 11 + (01 + 10)(00 + 11)*(01 + 10)]*', '(1 + 01*0)*'];
-  automatas: Automaton[] = []
-  constructor(private http: HttpClient) {
-    const symbols = ['0', '1'];
-    const A: State = {
-      name: "A",
-      acceptance: true,
-      initial: true
-    }
-    const B: State = {
-      name: "B",
-      acceptance: false,
-      initial: false
-    }
-    const C: State = {
-      name: "C",
-      acceptance: false,
-      initial: false
-    }
-    const D: State = {
-      name: "D",
-      acceptance: false,
-      initial: false
-    }
-    const states1: State[] = [A, B, C, D];
-    const transitions1: Transition[] = [
-      {
-        actualState: A,
-        inputSymbol: "0",
-        nextState: C
-      },
-      {
-        actualState: A,
-        inputSymbol: "1",
-        nextState: B
-      },
-      {
-        actualState: B,
-        inputSymbol: "0",
-        nextState: D
-      },
-      {
-        actualState: B,
-        inputSymbol: "1",
-        nextState: A
-      },
-      {
-        actualState: C,
-        inputSymbol: "0",
-        nextState: A
-      },
-      {
-        actualState: C,
-        inputSymbol: "1",
-        nextState: D
-      },
-      {
-        actualState: D,
-        inputSymbol: "0",
-        nextState: B
-      },
-      {
-        actualState: D,
-        inputSymbol: "1",
-        nextState: C
-      }
-    ];
-    const automata1 = new Automaton(symbols, states1, transitions1);
-
-    const A2: State = {
-      name: 'A',
-      acceptance: true,
-      initial: true
-    };
-    const B2: State = {
-      name: 'B',
-      acceptance: false,
-      initial: false
-    };
-
-    const states2 = [A2, B2];
-    const transitions2: Transition[] = [
-      {
-        actualState: A2,
-        inputSymbol: "0",
-        nextState: B2
-      },
-      {
-        actualState: A2,
-        inputSymbol: "1",
-        nextState: A2
-      },
-      {
-        actualState: B2,
-        inputSymbol: "0",
-        nextState: A2
-      },
-      {
-        actualState: B2,
-        inputSymbol: "1",
-        nextState: B2
-      }
-    ];
-    const automata2 = new Automaton(symbols, states2, transitions2);
-    this.automatas = [automata1, automata2];
-  }
+  regExps: string[] = [];
+  automatas: Automaton[] = [];
+  constructor(private http: HttpClient) {}
   convertRegExpToAutomaton(regExp: string): Observable<Automaton> {
-    console.log({ inputRex: regExp });
     return this.http.post(`${this.API_URL}/rex`, { inputRex: regExp })
       // return this.http.get(this.MOCKY_URL)
       .pipe(map(response => {
-        console.log(response);
         const inputSymbols: string[] = response['inputSymbols'];
         const states: State[] = response['states']
           .map(state => {
@@ -133,7 +28,7 @@ export class RegExpService {
               initial: state['initial']
             };
           });
-        const transitions: Transition[] = response['transitions']
+        let transitions: Transition[] = response['transitions']
           .map(transition => {
             const actualState = states
               .find(state => state.name === transition['actualState']);
@@ -145,6 +40,25 @@ export class RegExpService {
               nextState: nextState
             };
           });
+        const hasErrorState = states.find(state => state.name === 'Error');
+        const errorTransitions: Transition[] = [];
+        if (hasErrorState) {    
+          for (let i = 0; i < inputSymbols.length; i++) {
+            const symbol = inputSymbols[i];
+            const errorState: State = {
+              name: 'Error',
+              acceptance: false,
+              initial: false
+            };
+            const transicionError: Transition = {
+              actualState: errorState,
+              inputSymbol: symbol,
+              nextState: errorState
+            };
+            errorTransitions.push(transicionError);
+          }
+          transitions = [...transitions, ...errorTransitions];
+        }
         const automaton = new Automaton(inputSymbols, states, transitions);
         this.regExps.push(regExp);
         this.automatas.push(automaton);
