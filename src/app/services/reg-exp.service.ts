@@ -1,5 +1,5 @@
 import { Injectable } from '@angular/core';
-import { HttpClient } from '@angular/common/http';
+import { HttpClient, HttpHeaders } from '@angular/common/http';
 import { Observable } from 'rxjs';
 import { map } from 'rxjs/operators';
 import { Automaton } from '../models/automata.model';
@@ -10,7 +10,7 @@ import { Transition } from '../models/transicion.model';
   providedIn: 'root'
 })
 export class RegExpService {
-  API_URL = 'API_URL';
+  API_URL = 'https://endpoint-rex2fsm.herokuapp.com';
   MOCKY_URL = 'http://www.mocky.io/v2/5e7304573000005e002e61b9';
   regExps: string[] = ['[00 + 11 + (01 + 10)(00 + 11)*(01 + 10)]*', '(1 + 01*0)*'];
   automatas: Automaton[] = []
@@ -118,10 +118,12 @@ export class RegExpService {
     const automata2 = new Automaton(symbols, states2, transitions2);
     this.automatas = [automata1, automata2];
   }
-  convertRegExpToAutomaton(RegExp: string): Observable<Automaton> {
-    // return this.http.post(`${this.API_URL}/endpoint`, { RegExp })
-    return this.http.get(this.MOCKY_URL)
+  convertRegExpToAutomaton(regExp: string): Observable<Automaton> {
+    console.log({ inputRex: regExp });
+    return this.http.post(`${this.API_URL}/rex`, { inputRex: regExp })
+      // return this.http.get(this.MOCKY_URL)
       .pipe(map(response => {
+        console.log(response);
         const inputSymbols: string[] = response['inputSymbols'];
         const states: State[] = response['states']
           .map(state => {
@@ -144,7 +146,7 @@ export class RegExpService {
             };
           });
         const automaton = new Automaton(inputSymbols, states, transitions);
-        this.regExps.push(RegExp);
+        this.regExps.push(regExp);
         this.automatas.push(automaton);
         return automaton;
       }));
